@@ -1,3 +1,4 @@
+import React from 'react';
 import { Map } from './components/Map';
 import { CustomerForm } from './components/CustomerForm';
 import { CustomerList } from './components/CustomerList';

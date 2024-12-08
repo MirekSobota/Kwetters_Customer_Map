@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import { useCustomerStore } from '../store/useCustomerStore';
+import { searchAddress } from '../utils/geocoding';
 import 'leaflet/dist/leaflet.css';
 
 // Fix for default marker icon
@@ -17,12 +18,27 @@ const customIcon = new Icon({
 
 export function Map() {
   const customers = useCustomerStore((state) => state.customers);
-  const defaultCenter = [40.7128, -74.0060] as [number, number]; // NYC coordinates
+  const [center, setCenter] = useState<[number, number]>([52.1205, 11.4123]); // Approximate coordinates for Hohe Börde
+
+  useEffect(() => {
+    const initializeMap = async () => {
+      try {
+        const location = await searchAddress('Braunschweiger Str. 1, 39326 Hohe Börde');
+        if (location) {
+          setCenter([location.lat, location.lon]);
+        }
+      } catch (error) {
+        console.error('Error setting initial location:', error);
+      }
+    };
+
+    initializeMap();
+  }, []);
 
   return (
     <MapContainer
-      center={defaultCenter}
-      zoom={12}
+      center={center}
+      zoom={13}
       className="w-full h-[600px] rounded-lg shadow-lg z-0"
     >
       <TileLayer
